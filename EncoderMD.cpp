@@ -1,5 +1,5 @@
 // -----
-// 
+//
 // -----
 
 #include "EncoderMD.h"
@@ -11,10 +11,11 @@
 // and 0 in all the other (no change or not valid) cases.
 
 const int8_t ENCDIRECTION[] = {
-    0, -1, 1, 0,
-    1, 0, 0, -1,
-    -1, 0, 0, 1,
-    0, 1, -1, 0};           //int8_t is a signed integer type with a width of exactly 8 bits
+  0, -1, 1, 0,
+  1, 0, 0, -1,
+  -1, 0, 0, 1,
+  0, 1, -1, 0
+};           //int8_t is a signed integer type with a width of exactly 8 bits
 
 
 //---------------------------------------------
@@ -36,72 +37,71 @@ EncoderMD::EncoderMD(byte pin1, byte pin2)
   // start with position 0;
   _position = 0;
   _positionExt = 0;
-} 
+}
 
 
 int EncoderMD::getPosition()
 {
   return _positionExt;
-} 
+}
 
 void EncoderMD::setLimits(byte minPos, byte maxPos)
 {
-	if (maxPos > minPos)
-	{
-		_minPos = minPos;
-		_maxPos = maxPos;
-	}
-	encoderISR();
+  if (maxPos > minPos)
+  {
+    _minPos = minPos;
+    _maxPos = maxPos;
+  }
+  encoderISR();
 }
 
 void EncoderMD:: setWrap(bool wrap)
 {
-	_wrap = wrap;
+  _wrap = wrap;
 }
 
 void EncoderMD::setPosition(int newPosition)
-{	
-    _position = ((newPosition << 2) | (_position & 0x03));
-    _positionExt = newPosition;
-} 
+{
+  _position = ((newPosition << 2) | (_position & 0x03));
+  _positionExt = newPosition;
+}
 
 void EncoderMD::encoderISR(void)
 {
   byte sig1 = digitalRead(_pin1);
   byte sig2 = digitalRead(_pin2);
   int8_t thisState = sig1 | (sig2 << 1);
+  int8_t change = ENCDIRECTION[(_oldState << 2) | thisState];
 
-  if (_oldState != thisState) {
-    _position += ENCDIRECTION[(_oldState << 2) | thisState];
-    _oldState = thisState;	
+  if (change != 0)  {
+    _position += change;
+    _oldState = thisState;
     _positionExt = _position >> 2;
-  } 
+  }
 
+
+  if (_positionExt < _minPos)
+  {
+    if (_wrap)
+    {
+      setPosition(_maxPos);
+    }
+    else
+    {
+      setPosition(_minPos);
+    }
+  }
+  else if (_positionExt > _maxPos)
+  {
+    if (_wrap)
+    {
+      setPosition(_minPos);
+    }
+    else
+    {
+      setPosition(_maxPos);
+    }
+  }
 }
-  
-  
-  	if (_positionExt < _minPos)
-	{
-		if (_wrap)
-		{
-		setPosition(_maxPos);
-		}
-		else
-		{
-		setPosition(_minPos);
-		}
-	}		
-	else if (_positionExt > _maxPos)
-	{
-		if (_wrap)
-		{
-			setPosition(_minPos);
-		}
-		else
-		{
-			setPosition(_maxPos);
-		}
-	}
-} 
 
 // End

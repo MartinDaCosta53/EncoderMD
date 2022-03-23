@@ -1,4 +1,5 @@
 /*
+
   Copyright (C) Martin Da Costa 2022
 
   This work is licensed under the:
@@ -32,57 +33,36 @@
     WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 
 */
+// -----
+// EncoderMD.h - Library for using rotary encoders.
+// This class is implemented for use with the Arduino environment.
 
-/*
-      3rd party libraries needed for compilation: (not for binary-only distributions)
 
-      Streaming   -- C++ stream style output, v5, (http://arduiniana.org/libraries/streaming/)
-*/
+#ifndef EncoderMD_h
+#define EncoderMD_h
 
-#include <Streaming.h>
-#include "EncoderMD.h"
+#include "Arduino.h"
 
-const byte PIN_ENCA = 8;
-const byte PIN_ENCB = 9;
-
-EncoderMD encoder(PIN_ENCA, PIN_ENCB);
-
-byte newPos;
-volatile byte oldPos = 0;
-
-void setupPCI()
+class EncoderMD
 {
-  cli();  //Disable interrupts
-  PCICR |= (1 << PCIE0);  //Enable PCI on Port B
-  PCMSK0 |= (1 << PCINT0);  //Set pin 8 for PCI
-  PCMSK0 |= (1 << PCINT1);  //Set pin 9 for PCI
-  sei();  //Enable interrupts
-}
+  public:
+    // ----- Constructor -----
+    EncoderMD(byte pin1, byte pin2);
 
-void setup()
-{
-  Serial.begin (115200);
-  Serial << F("> Pin Change Interrupt example for encoder") << endl << endl;
+    int getPosition();
+    void setPosition(int newPosition);
+    void setLimits(byte minPos, byte maxPos);
+    void setWrap(bool wrap);
+    void encoderISR(void);
 
-  setupPCI();
+  private:
+    byte _pin1, _pin2;
+    volatile int8_t _oldState;
+    volatile int _position;        // Internal position (4 times _positionExt)
+    volatile int _positionExt;     // External position
+    byte _minPos = 0;
+    byte _maxPos = 10;
+    bool _wrap = 0;
 
-  encoder.setLimits (0, 10);
-  encoder.setPosition (0);
-  encoder.setWrap (0);
-}
-
-void loop()
-{
-  newPos = encoder.getPosition();
-  if (newPos != oldPos)
-  {
-    Serial << F("> Encoder position = ") << newPos << endl;
-    oldPos = newPos;
-  }
-}
-
-ISR(PCINT0_vect)
-{
-  encoder.encoderISR();
-
-}
+};
+#endif

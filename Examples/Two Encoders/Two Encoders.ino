@@ -76,8 +76,10 @@ void setup()
 
   encoder1.setLimits (0, 10);
   encoder1.setPosition (0);
+  encoder1.setWrap (0);
   encoder2.setLimits (0, 10);
   encoder2.setPosition (0);
+  encoder2.setWrap (0);
 }
 
 void loop()

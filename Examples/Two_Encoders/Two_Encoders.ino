@@ -40,7 +40,7 @@
  */
  
 #include <Streaming.h>
-#include "EncoderMD.h"
+#include <EncoderMD.h>
 
 const byte PIN_ENC1A = 4;
 const byte PIN_ENC1B = 5;
@@ -50,11 +50,15 @@ const byte PIN_ENC2B = 7;
 EncoderMD encoder1(PIN_ENC1A, PIN_ENC1B);
 EncoderMD encoder2(PIN_ENC2A, PIN_ENC2B);
 
-byte newPos1;
-byte newPos2;
-volatile byte oldPos1 = 0;
-volatile byte oldPos2 = 0;
+int newPos1;
+int newPos2;
+volatile int oldPos1 = 0;
+volatile int oldPos2 = 0;
 volatile byte lastPins = 0;
+int minPos1 = -10;
+int maxPos1 = 10;
+int minPos2 = 0;
+int maxPos2 = 20;
 
 void setupPCI()
 {
@@ -74,10 +78,10 @@ void setup()
 
   setupPCI();
 
-  encoder1.setLimits (0, 10);
+  encoder1.setLimits (minPos1, maxPos1);
   encoder1.setPosition (0);
   encoder1.setWrap (0);
-  encoder2.setLimits (0, 10);
+  encoder2.setLimits (minPos2, maxPos2);
   encoder2.setPosition (0);
   encoder2.setWrap (0);
 }

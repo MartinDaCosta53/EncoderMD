@@ -86,5 +86,4 @@ void loop()
 ISR(PCINT0_vect)
 {
   encoder.encoderISR();
-
 }

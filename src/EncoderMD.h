@@ -28,7 +28,5 @@ class EncoderMD
     int _minPos = 0;
     int _maxPos = 10;
     bool _wrap = 0;
-    unsigned int _sequence;
-
-};
+ };
 #endif

@@ -21,14 +21,23 @@ const bool ENCVALIDITY[] = {
 //---------------------------------------------
 // Constructor - initialises member variables
 
-EncoderMD::EncoderMD(byte pin1, byte pin2)
+EncoderMD::EncoderMD(byte pin1, byte pin2, bool pullup)
 {
   _pin1 = pin1;
   _pin2 = pin2;
+  _pullup = pullup;
 
   // Setup the input pins
+  if (_pullup == 0)
+  {
   pinMode(pin1, INPUT);
   pinMode(pin2, INPUT);
+  }
+  else
+  {
+	pinMode(pin1, INPUT_PULLUP);
+    pinMode(pin2, INPUT_PULLUP);
+  }	
 
   byte sig1 = digitalRead(_pin1);  // At the detent value is 1 due to filter pull-up resistor
   byte sig2 = digitalRead(_pin2);  // At the detent value is 1 due to filter pull-up resistor
@@ -60,6 +69,11 @@ void EncoderMD:: setWrap(bool wrap)
   _wrap = wrap;
 }
 
+void EncoderMD:: setIncrement(int increment)
+{
+	_increment = increment;
+}
+
 void EncoderMD::setPosition(int newPosition)
 {
   _position = newPosition;
@@ -74,8 +88,8 @@ void EncoderMD::encoderISR(void)
 
   if (ENCVALIDITY[_state])  {
     _sequence = (_sequence << 4) | _state;
-    if ((_sequence ) == 0x2b) _position++;
-    if ((_sequence ) == 0x17) _position--;
+    if ((_sequence ) == 0x2b) (_position = _position + _increment);
+    if ((_sequence ) == 0x17) (_position = _position - _increment);
   }
 
   if (_position < _minPos)

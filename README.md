@@ -28,10 +28,10 @@ pins to data ports.  Information can also be found in the examples.
 
 ## Instantiation
 
-Instantiation of the an instance of the encoder includes two variables to be set.
-These define the two inputs pins for the encoder.
-The library assumes that, as default, the standard R-C input filter is used, which 
-design results in input pull up of the active low inputs.
+Two variables are set during instantiation. These define the inputs pins for
+the encoder.
+The library assumes that, as default, the standard Bourns recommended R-C input
+filter is used, which design has an intrinsic input pull up of the active low inputs.
 An optional third variable can be set that will define input pull-up for when the
 standard filter is not used. This variable is a boolean and is set to 1 for
 input pull-up.

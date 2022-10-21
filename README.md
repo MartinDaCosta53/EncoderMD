@@ -9,6 +9,7 @@ any facility for handling the push button switch often found on these encoders.
 - Max and min limits
 - Encoder wrap round
 - Position setting
+- Increment setting
 - Position range of -2^15 to 2^15
 
 ## Testing
@@ -25,6 +26,16 @@ reference should be made to the data sheet when used on a MEGA.  The user is
 advised to refer to the relevant board data sheets to ensure correct mapping of 
 pins to data ports.  Information can also be found in the examples.
 
+## Instantiation
+
+Instantiation of the an instance of the encoder includes two variables to be set.
+These define the two inputs pins for the encoder.
+The library assumes that, as default, the standard R-C input filter is used, which 
+design results in input pull up of the active low inputs.
+An optional third variable can be set that will define input pull-up for when the
+standard filter is not used. This variable is a boolean and is set to 1 for
+input pull-up.
+
 ## Functions
 
 The following functions allow interface to the encoder library
@@ -32,6 +43,10 @@ The following functions allow interface to the encoder library
 ### setPosition (int newPosition)
 Allows the setting of a start position for the encoder.
 Default is zero.
+
+### setIncrement (int increment)
+Allows the amount that the position is incremented or decremented for each
+change of encoder position to be set.  Default is one.
 
 ### setLimits (int minPos, int maxPos)
 Sets the limits between which the encoder will operate.

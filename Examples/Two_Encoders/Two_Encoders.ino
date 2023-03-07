@@ -42,6 +42,10 @@
 #include <Streaming.h>
 #include <EncoderMD.h>
 
+const byte VER_MAJ = 1;   // code major version
+const byte VER_MIN = 1;   // code minor version
+const byte VER_PATCH = 0; // code sub-version
+
 const byte PIN_ENC1A = 4;
 const byte PIN_ENC1B = 5;
 const byte PIN_ENC2A = 6;
@@ -84,6 +88,9 @@ void setup()
   encoder2.setLimits (minPos2, maxPos2);
   encoder2.setPosition (0);
   encoder2.setWrap (0);
+  
+  // show code version and copyright notice
+  printConfig();
 }
 
 void loop()
@@ -112,4 +119,14 @@ ISR(PCINT2_vect)
   {
     encoder2.encoderISR();
   }
+}
+
+void printConfig(void) {
+  // code version
+  Serial << F("> code version: ") << VER_MAJ << F(".") << VER_MIN << F(".") << VER_PATCH << endl;
+  Serial << F("> compiled on ") << __DATE__ << F(" at ") << __TIME__ << F(", compiler ver = ") << __cplusplus << endl;
+
+  // copyright
+  Serial << F("> © Martin Da Costa (MERG M6223) 2023") << endl
+         << endl;
 }

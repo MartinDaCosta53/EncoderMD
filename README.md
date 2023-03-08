@@ -16,6 +16,9 @@ any facility for handling the push button switch often found on these encoders.
 
 The library has been tested on Arduino UNO, NANO and MEGA with both one and two
 encoders as shown in the examples.
+As of March 2023, it has also been tested on a Raspberry Pi Pico using Earle Philhower's
+port to the Arduino ecosystem https://github.com/earlephilhower/arduino-pico
+Examples to demonstrate Pico use are also included.
 
 ## Limitations
 

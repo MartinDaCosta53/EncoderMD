@@ -54,7 +54,7 @@ const byte PIN_ENC2A = 18;  // Number is GPIO reference NOT physical pin number 
 const byte PIN_ENC2B = 19;  // Number is GPIO reference NOT physical pin number (25)
 
 EncoderMD encoder1(PIN_ENC1A, PIN_ENC1B);
-EncoderMD encoder2(PIN_ENC2A, PIN_ENC2B);
+EncoderMD encoder2(PIN_ENC2A, PIN_ENC2B, 1);  // Third argument specifies input pullup if no external pullup implemented.
 
 int newPos1 = 0;
 int newPos2 = 0;

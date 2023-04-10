@@ -40,13 +40,13 @@
 
       Streaming   -- C++ stream style output, v5, (http://arduiniana.org/libraries/streaming/)
  */
- 
+
 #include <Streaming.h>
 #include <EncoderMD.h>
 
-const byte VER_MAJ = 2;   // code major version
-const byte VER_MIN = 0;   // code minor version
-const byte VER_PATCH = 0; // code sub-version
+const byte VER_MAJ = 2;    // code major version
+const byte VER_MIN = 1;    // code minor version
+const byte VER_PATCH = 0;  // code sub-version
 
 const byte PIN_ENC1A = 16;  // Number is GPIO reference NOT physical pin number (21)
 const byte PIN_ENC1B = 17;  // Number is GPIO reference NOT physical pin number (22)
@@ -66,62 +66,47 @@ int maxPos1 = 10;
 int minPos2 = 0;
 int maxPos2 = 20;
 
-void setup()
-{
-  Serial.begin (115200);
+void setup() {
+  Serial.begin(115200);
   delay(2000);  // Required to ensure that serial outputs in setup are executed
-  Serial << F("> Pin Change Interrupt example for encoder") << endl << endl;
+  Serial << F("> Pin Change Interrupt example for encoder") << endl
+         << endl;
 
-  attachInterrupt(PIN_ENC1A, isr, CHANGE);
-  attachInterrupt(PIN_ENC1B, isr, CHANGE);
-  attachInterrupt(PIN_ENC2A, isr, CHANGE);
-  attachInterrupt(PIN_ENC2B, isr, CHANGE);
+  attachInterrupt(PIN_ENC1A, isr1, CHANGE);
+  attachInterrupt(PIN_ENC1B, isr1, CHANGE);
+  attachInterrupt(PIN_ENC2A, isr2, CHANGE);
+  attachInterrupt(PIN_ENC2B, isr2, CHANGE);
 
-  encoder1.setLimits (minPos1, maxPos1);
-  encoder1.setPosition (0);
-  encoder1.setWrap (0);
-  encoder2.setLimits (minPos2, maxPos2);
-  encoder2.setPosition (0);
-  encoder2.setWrap (0);
-  
+  encoder1.setLimits(minPos1, maxPos1);
+  encoder1.setPosition(0);
+  encoder1.setWrap(0);
+  encoder2.setLimits(minPos2, maxPos2);
+  encoder2.setPosition(0);
+  encoder2.setWrap(0);
+
   // show code version and copyright notice
   printConfig();
-  
+
   Serial << F("> Encoder 1 position = ") << newPos1 << F("  Encoder 2 position = ") << newPos2 << endl;
 }
 
-void loop()
-{
+void loop() {
   newPos1 = encoder1.getPosition();
   newPos2 = encoder2.getPosition();
-  if ((newPos1 != oldPos1) || (newPos2 != oldPos2))
-  {
+  if ((newPos1 != oldPos1) || (newPos2 != oldPos2)) {
     Serial << F("> Encoder 1 position = ") << newPos1 << F("  Encoder 2 position = ") << newPos2 << endl;
     oldPos1 = newPos1;
     oldPos2 = newPos2;
   }
 }
 
-// The Pico only has one hardware interrupt vector per core.  Thus, a hardware interrupt could have
-// originated from any of the 26 GPIO pins that have been interrupt enabled. Since, in this example, we have 4 interrupts
-// from 2 seperate encoders, it is necessary to identify the encoder that has originated an interrupt.
+void isr1() {
+  encoder1.encoderISR();
+}
 
-void isr()
-{
-  byte pins = (digitalRead(PIN_ENC1A) | (digitalRead(PIN_ENC1B) << 1) | (digitalRead(PIN_ENC2A) << 2) | (digitalRead(PIN_ENC2B) << 3));
-  // Assembles pins into a byte of data.  In this case we are only using half a byte.  Clearly one byte could manage 4 encoders.
-  byte change = pins ^ lastPins;  //determine what pins have changed
-  lastPins = pins;
-
-  if (change & 0b00000011)
-  {
-    encoder1.encoderISR();
-  }
-  if (change & 0b00001100)
-  {
-    encoder2.encoderISR();
-  }
-}	
+void isr2() {
+  encoder2.encoderISR();
+}
 
 void printConfig(void) {
   // code version

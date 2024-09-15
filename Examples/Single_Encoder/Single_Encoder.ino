@@ -43,7 +43,7 @@
 #include <EncoderMD.h>
 
 const byte VER_MAJ = 1;   // code major version
-const byte VER_MIN = 1;   // code minor version
+const byte VER_MIN = 2;   // code minor version
 const byte VER_PATCH = 0; // code sub-version
 
 const byte PIN_ENCA = 8;
@@ -51,7 +51,7 @@ const byte PIN_ENCB = 9;
 
 EncoderMD encoder(PIN_ENCA, PIN_ENCB);
 
-int newPos;
+volatile int newPos;
 volatile int oldPos = 0;
 int minPos = -10;
 int maxPos = 10;
@@ -65,8 +65,7 @@ void setupPCI()
   sei();  //Enable interrupts
 }
 
-void setup()
-{
+void setup(){
   Serial.begin (115200);
   Serial << F("> Pin Change Interrupt example for encoder") << endl << endl;
 
@@ -82,7 +81,9 @@ void setup()
 
 void loop()
 {
+  noInterrupts();
   newPos = encoder.getPosition();
+  interrupts();
   if (newPos != oldPos)
   {
     Serial << F("> Encoder position = ") << newPos << endl;
@@ -101,5 +102,6 @@ void printConfig(void) {
   Serial << F("> compiled on ") << __DATE__ << F(" at ") << __TIME__ << F(", compiler ver = ") << __cplusplus << endl;
 
   // copyright
-  Serial << F("> © Martin Da Costa (MERG M6223) 2023") << endl
+  Serial << F("> © Martin Da Costa (MERG M6223) 2023") << endl;
+}
         

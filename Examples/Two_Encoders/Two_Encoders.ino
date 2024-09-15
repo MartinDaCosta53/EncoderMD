@@ -43,7 +43,7 @@
 #include <EncoderMD.h>
 
 const byte VER_MAJ = 1;   // code major version
-const byte VER_MIN = 1;   // code minor version
+const byte VER_MIN = 2;   // code minor version
 const byte VER_PATCH = 0; // code sub-version
 
 const byte PIN_ENC1A = 4;
@@ -54,8 +54,8 @@ const byte PIN_ENC2B = 7;
 EncoderMD encoder1(PIN_ENC1A, PIN_ENC1B);
 EncoderMD encoder2(PIN_ENC2A, PIN_ENC2B);
 
-int newPos1;
-int newPos2;
+volatile int newPos1;
+volatile int newPos2;
 volatile int oldPos1 = 0;
 volatile int oldPos2 = 0;
 volatile byte lastPins = 0;
@@ -95,8 +95,10 @@ void setup()
 
 void loop()
 {
+  noInterrupts();
   newPos1 = encoder1.getPosition();
   newPos2 = encoder2.getPosition();
+  interrupts();
   if ((newPos1 != oldPos1) || (newPos2 != oldPos2))
   {
     Serial << F("> Encoder 1 position = ") << newPos1 << F(" Encoder 2 position = ") << newPos2 << endl;
